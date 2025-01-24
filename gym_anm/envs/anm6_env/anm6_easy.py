@@ -1,5 +1,7 @@
 """The :code:`ANM6Easy-v0` task."""
 
+import pickle
+
 import numpy as np
 
 from .anm6 import ANM6
@@ -77,58 +79,71 @@ class ANM6Easy(ANM6):
 def _get_load_time_series():
     """Return the fixed 24-hour time-series for the load injections."""
 
-    # Device 1 (residential load).
-    s1 = -np.ones(25)
-    s12 = np.linspace(-1.5, -4.5, 7)
-    s2 = -5 * np.ones(13)
-    s23 = np.linspace(-4.625, -2.375, 7)
-    s3 = -2 * np.ones(13)
-    P1 = np.concatenate((s1, s12, s2, s23, s3, s23[::-1], s2, s12[::-1], s1[:4]))
+    # Load pickle fromn ../data/preprocessed/P_loads.pkl
+    with open("/home/jcestero/Vicomtech_ubuntu/gym-anm/data/processed/P_loads.pkl", "rb") as f:
+        data = pickle.load(f)
 
-    # Device 3 (industrial load).
-    s1 = -4 * np.ones(25)
-    s12 = np.linspace(-4.75, -9.25, 7)
-    s2 = -10 * np.ones(13)
-    s23 = np.linspace(-11.25, -18.75, 7)
-    s3 = -20 * np.ones(13)
-    P3 = np.concatenate((s1, s12, s2, s23, s3, s23[::-1], s2, s12[::-1], s1[:4]))
+    if data is None:
+        # Device 1 (residential load).
+        s1 = -np.ones(25)
+        s12 = np.linspace(-1.5, -4.5, 7)
+        s2 = -5 * np.ones(13)
+        s23 = np.linspace(-4.625, -2.375, 7)
+        s3 = -2 * np.ones(13)
+        P1 = np.concatenate((s1, s12, s2, s23, s3, s23[::-1], s2, s12[::-1], s1[:4]))
 
-    # Device 5 (EV charging station load).
-    s1 = np.zeros(25)
-    s12 = np.linspace(-3.125, -21.875, 7)
-    s2 = -25 * np.ones(13)
-    s23 = np.linspace(-21.875, -3.125, 7)
-    s3 = np.zeros(13)
-    P5 = np.concatenate((s1, s12, s2, s23, s3, s23[::-1], s2, s12[::-1], s1[:4]))
+        # Device 3 (industrial load).
+        s1 = -4 * np.ones(25)
+        s12 = np.linspace(-4.75, -9.25, 7)
+        s2 = -10 * np.ones(13)
+        s23 = np.linspace(-11.25, -18.75, 7)
+        s3 = -20 * np.ones(13)
+        P3 = np.concatenate((s1, s12, s2, s23, s3, s23[::-1], s2, s12[::-1], s1[:4]))
 
-    P_loads = np.vstack((P1, P3, P5))
+        # Device 5 (EV charging station load).
+        s1 = np.zeros(25)
+        s12 = np.linspace(-3.125, -21.875, 7)
+        s2 = -25 * np.ones(13)
+        s23 = np.linspace(-21.875, -3.125, 7)
+        s3 = np.zeros(13)
+        P5 = np.concatenate((s1, s12, s2, s23, s3, s23[::-1], s2, s12[::-1], s1[:4]))
+
+        P_loads = np.vstack((P1, P3, P5))
+    else:
+        P_loads = data
+
     assert P_loads.shape == (3, 96)
-
     return P_loads
 
 
 def _get_gen_time_series():
     """Return the fixed 24-hour time-series for the generator maximum production."""
+    # Load pickle fromn ../data/preprocessed/P_maxs.pkl
+    with open("/home/jcestero/Vicomtech_ubuntu/gym-anm/data/processed/P_maxs.pkl", "rb") as f:
+        data = pickle.load(f)
 
-    # Device 2 (residential PV aggregation).
-    s1 = np.zeros(25)
-    s12 = np.linspace(0.5, 3.5, 7)
-    s2 = 4 * np.ones(13)
-    s23 = np.linspace(7.25, 36.75, 7)
-    s3 = 30 * np.ones(13)
-    P2 = np.concatenate((s1, s12, s2, s23, s3, s23[::-1], s2, s12[::-1], s1[:4]))
+    if data is None:
+        # Device 2 (residential PV aggregation).
+        s1 = np.zeros(25)
+        s12 = np.linspace(0.5, 3.5, 7)
+        s2 = 4 * np.ones(13)
+        s23 = np.linspace(7.25, 36.75, 7)
+        s3 = 30 * np.ones(13)
+        P2 = np.concatenate((s1, s12, s2, s23, s3, s23[::-1], s2, s12[::-1], s1[:4]))
 
-    # Device 4 (wind farm).
-    s1 = 40 * np.ones(25)
-    s12 = np.linspace(36.375, 14.625, 7)
-    s2 = 11 * np.ones(13)
-    s23 = np.linspace(14.725, 36.375, 7)
-    s3 = 40 * np.ones(13)
-    P4 = np.concatenate((s1, s12, s2, s23, s3, s23[::-1], s2, s12[::-1], s1[:4]))
+        # Device 4 (wind farm).
+        s1 = 40 * np.ones(25)
+        s12 = np.linspace(36.375, 14.625, 7)
+        s2 = 11 * np.ones(13)
+        s23 = np.linspace(14.725, 36.375, 7)
+        s3 = 40 * np.ones(13)
+        P4 = np.concatenate((s1, s12, s2, s23, s3, s23[::-1], s2, s12[::-1], s1[:4]))
 
-    P_maxs = np.vstack((P2, P4))
+        P_maxs = np.vstack((P2, P4))
+    else:
+        P_maxs = data
+
     assert P_maxs.shape == (2, 96)
-
     return P_maxs
 
 
@@ -148,4 +163,5 @@ if __name__ == "__main__":
         env.render()
         time.sleep(0.5)
 
+    print("Done with {} steps in {} seconds!".format(T, time.time() - start))
     print("Done with {} steps in {} seconds!".format(T, time.time() - start))
