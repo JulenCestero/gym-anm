@@ -1,20 +1,25 @@
 """The base class for :code:`gym-anm` environments."""
 
-import gymnasium as gym
-from gymnasium import spaces
-import numpy as np
-from logging import getLogger
-from copy import deepcopy
-from typing import Optional
 import warnings
+from copy import deepcopy
+from logging import getLogger
+from typing import Optional
+
+import gymnasium as gym
+import numpy as np
+from gymnasium import spaces
 from scipy.sparse.linalg import MatrixRankWarning
 
+from ..errors import (
+    EnvInitializationError,
+    EnvNextVarsError,
+    ObsNotSupportedError,
+    ObsSpaceError,
+)
 from ..simulator import Simulator
-from ..errors import ObsSpaceError, ObsNotSupportedError, EnvInitializationError, EnvNextVarsError
-from .utils import check_env_args
+from ..simulator.components import Generator, Load, StorageUnit
 from ..simulator.components.constants import STATE_VARIABLES
-from ..simulator.components import StorageUnit, Generator, Load
-
+from .utils import check_env_args
 
 logger = getLogger(__file__)
 
@@ -449,7 +454,7 @@ class ANMEnv(gym.Env):
 
         # 5. Update the timestep.
         self.timestep += 1
-
+        info.update({"energy loss": self.e_loss, "penalty": self.penalty})
         return obs, r, self.terminated, truncated, info
 
     def render(self, mode="human"):
