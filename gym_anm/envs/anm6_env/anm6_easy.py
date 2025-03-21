@@ -79,7 +79,7 @@ class ANM6Easy(ANM6):
 def _get_load_time_series():
     """Return the fixed 24-hour time-series for the load injections."""
 
-    # Load pickle fromn ../data/preprocessed/P_loads.pkl
+    # Load pickle from ../data/preprocessed/P_loads.pkl
     with open("/home/jcestero/Vicomtech_ubuntu/gym-anm/data/processed/P_loads.pkl", "rb") as f:
         data = pickle.load(f)
 
@@ -118,7 +118,7 @@ def _get_load_time_series():
 
 def _get_gen_time_series():
     """Return the fixed 24-hour time-series for the generator maximum production."""
-    # Load pickle fromn ../data/preprocessed/P_maxs.pkl
+    # Load pickle from ../data/preprocessed/P_maxs.pkl
     with open("/home/jcestero/Vicomtech_ubuntu/gym-anm/data/processed/P_maxs.pkl", "rb") as f:
         data = pickle.load(f)
 
