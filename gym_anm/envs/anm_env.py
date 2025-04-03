@@ -10,12 +10,7 @@ import numpy as np
 from gymnasium import spaces
 from scipy.sparse.linalg import MatrixRankWarning
 
-from ..errors import (
-    EnvInitializationError,
-    EnvNextVarsError,
-    ObsNotSupportedError,
-    ObsSpaceError,
-)
+from ..errors import EnvInitializationError, EnvNextVarsError, ObsNotSupportedError, ObsSpaceError
 from ..simulator import Simulator
 from ..simulator.components import Generator, Load, StorageUnit
 from ..simulator.components.constants import STATE_VARIABLES
